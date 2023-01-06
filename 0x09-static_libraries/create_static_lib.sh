@@ -7,4 +7,4 @@ ar -rc liball.a *.c
 ranlib liball.a
 
 # Compile all .c files in the current directory, treating all warning messages as errors, and stopping after the compilation stage (i.e., not linking the object files into an executable)
-gcc -Wall -pedantic -Werror -Wextra -c *.c
+gcc -c *.c

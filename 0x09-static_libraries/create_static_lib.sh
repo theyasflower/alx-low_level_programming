@@ -3,7 +3,7 @@
 gcc -c *.c
 
 # Create the static library
-ar -rc liball.a *.c
+ar -rc liball.a *.o
 
 # Create the index for the static library
 ranlib liball.a

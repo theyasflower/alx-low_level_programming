@@ -1,6 +1,9 @@
 #include "main.h"
+#include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 
 /**
  * error_file - checks if files can be opened.

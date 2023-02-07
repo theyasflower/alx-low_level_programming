@@ -1,65 +1,70 @@
 #include "main.h"
 #include <stdio.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #define BUFSIZE 1024
 
-void check97(int ac)
+void check97(int argc)
 {
-  if (ac != 3)
+    if (argc != 3)
     {
-      dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-      exit(97);
+        dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+        exit(97);
     }
 }
 
-void check98(int file_from, char *file)
+void check98(char *file)
 {
-  if (file_from == -1)
+    int fd;
+
+    fd = open(file, O_RDONLY);
+    if (fd == -1)
     {
-      dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-      exit(98);
+        dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
+        exit(98);
     }
 }
 
-void check99(int file_to, char *file)
+void check99(char *file, int fd_to)
 {
-  if (file_to == -1)
+    int written;
+
+    written = write(fd_to, "", 1);
+    if (written == -1)
     {
-      dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-      exit(99);
+        dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
+        exit(99);
     }
 }
 
-void check100(int close_check)
+void check100(int fd, char *file)
 {
-  if (close_check == -1)
+    int closed;
+
+    closed = close(fd);
+    if (closed == -1)
     {
-      dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", close_check);
-      exit(100);
+        dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+        exit(100);
     }
 }
 
-int main(int ac, char **av)
+int main(int argc, char *argv[])
 {
-  check97(ac);
-  int file_from = open(av[1], O_RDONLY);
-  check98(file_from, av[1]);
-  int file_to = open(av[2], O_TRUNC | O_CREAT | O_WRONLY, 0664);
-  check99(file_to, av[2]);
-  char buf[BUFSIZE];
-  ssize_t read_check, write_check;
-  while ((read_check = read(file_from, buf, BUFSIZE)) > 0)
-    {
-      write_check = write(file_to, buf, read_check);
-      check99(write_check, av[2]);
-    }
-  check98(read_check, av[1]);
-  int close_check = close(file_from);
-  check100(close_check);
-  close_check = close(file_to);
-  check100(close_check);
-  return (0);
+    int fd_from, fd_to, read_status, written;
+    char buf[BUFSIZE];
+
+    check97(argc);
+    check98(argv[1]);
+
+    fd_from = open(argv[1], O_RDONLY);
+    fd_to = open(argv[2], O_CREAT | O_TRUNC | O_WRONLY, 0664);
+    check99(argv[2], fd_to);
+
+    do {
+        read_status = read(fd_from, buf, BUFSIZE);
 }
